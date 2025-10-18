@@ -18,6 +18,7 @@
                 <input type="text" name="nomor_surat" id="nomor_surat" class="form-control" placeholder="Masukkan Nomor Surat" required>
             </div>
 
+            {{-- Dokter Pemeriksa --}}
             <div class="mb-3">
                 <label for="dokter_id" class="form-label">Dokter Pemeriksa</label>
                 <select name="dokter_id" id="dokter_id" class="form-select" required>
@@ -28,6 +29,7 @@
                 </select>
             </div>
 
+            {{-- Data Pasien --}}
             <div class="mb-3">
                 <label class="form-label">Data Pasien</label>
                 <div class="border p-3 rounded bg-light">
@@ -39,6 +41,34 @@
                 </div>
             </div>
 
+            {{-- Inputan Tambahan --}}
+            <div class="mb-3">
+                <label for="tinggi_badan" class="form-label">Tinggi Badan (cm)</label>
+                <input type="number" name="tinggi_badan" id="tinggi_badan" class="form-control" placeholder="Masukkan Tinggi Badan" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="berat_badan" class="form-label">Berat Badan (kg)</label>
+                <input type="number" name="berat_badan" id="berat_badan" class="form-control" placeholder="Masukkan Berat Badan" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="tensi_darah" class="form-label">Tensi Darah</label>
+                <input type="text" name="tensi_darah" id="tensi_darah" class="form-control" placeholder="Masukkan Tensi Darah, contoh: 120/80" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="golongan_darah" class="form-label">Golongan Darah</label>
+                <select name="golongan_darah" id="golongan_darah" class="form-select" required>
+                    <option value="">-- Pilih Golongan Darah --</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="AB">AB</option>
+                    <option value="O">O</option>
+                </select>
+            </div>
+
+            {{-- Hasil Pemeriksaan --}}
             <div class="mb-3">
                 <label for="hasil" class="form-label">Hasil Pemeriksaan</label>
                 <select name="hasil" id="hasil" class="form-select" required>
@@ -49,6 +79,7 @@
                 </select>
             </div>
 
+            {{-- Tanggal Pemeriksaan --}}
             <div class="mb-3">
                 <label for="tanggal_pemeriksaan" class="form-label">Tanggal Pemeriksaan</label>
                 <input type="date" name="tanggal_pemeriksaan" id="tanggal_pemeriksaan" class="form-control" required>

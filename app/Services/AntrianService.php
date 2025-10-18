@@ -24,70 +24,74 @@ class AntrianService
     public function alokasiAntrian(PengajuanSurat $pengajuan): array
     {
         $limit = self::MAX_QUOTA_PER_DAY;
-        // Gunakan Waktu Jakarta
-        $currentDate = Carbon::now('Asia/Jakarta'); 
+        $now = Carbon::now('Asia/Jakarta');
 
-        DB::beginTransaction(); // Mulai transaksi manual
+        DB::beginTransaction();
 
         try {
             Log::info("ANTRIAN DEBUG: Memulai alokasi antrian untuk Order ID: {$pengajuan->midtrans_order_id}.");
 
-            // 1. Tentukan tanggal kunjungan dan nomor antrian
-            $tanggalKunjungan = $currentDate->copy();
+            $tanggalKunjungan = $now->copy();
             $nomorAntrian = 1;
 
-            // Loop untuk mencari kuota kosong
+            // Jika pendaftaran setelah jam 13.00, lompat ke hari berikutnya
+            if ($now->hour >= 13) {
+                $tanggalKunjungan->addDay();
+            }
+
+            // Cari hari kerja yang tersedia dan kuota masih ada
             while (true) {
-                // Skip Hari Sabtu dan Minggu (Asumsi layanan libur)
+                // Lewati Sabtu & Minggu
                 if ($tanggalKunjungan->isWeekend()) {
                     $tanggalKunjungan->addDay();
-                    continue; 
+                    continue;
                 }
 
-                // Hitung kuota yang sudah terisi untuk tanggal ini
+                // Hitung kuota yang sudah dipakai
                 $countToday = PengajuanSurat::where('tanggal_kuota', $tanggalKunjungan->toDateString())
                     ->whereIn('payment_status', ['SUCCESS', 'SETTLEMENT'])
                     ->count();
 
                 Log::info("ANTRIAN DEBUG: Tanggal [{$tanggalKunjungan->toDateString()}]: Kuota terisi {$countToday}/{$limit}.");
 
-                if ($countToday < $limit) {
-                    $nomorAntrian = $countToday + 1;
-                    break; // Slot ditemukan
+                // Logika kuota berdasarkan jam
+                if ($tanggalKunjungan->isSameDay($now)) {
+                    if ($now->hour >= 8 && $now->hour <= 11) {
+                        // Jam pagi masih bisa di slot hari ini
+                        if ($countToday < $limit) {
+                            $nomorAntrian = $countToday + 1;
+                            break;
+                        }
+                    }
                 }
 
-                // Kuota penuh, pindah ke hari berikutnya
-                $tanggalKunjungan->addDay();
+                // Hari berikutnya atau jam >=13.00
+                if ($countToday < $limit) {
+                    $nomorAntrian = $countToday + 1;
+                    break;
+                }
+
+                $tanggalKunjungan->addDay(); // pindah ke hari berikutnya
             }
 
-            // 2. Lakukan Update Data pada Model
+            // Update data pengajuan
             $pengajuan->nomor_antrian = $nomorAntrian;
             $pengajuan->tanggal_kuota = $tanggalKunjungan->toDateString();
-            
-            // Lakukan update payment_status ke SETTLEMENT di sini juga, 
-            // memastikan perubahan status akan di-commit
-            $pengajuan->payment_status = 'SETTLEMENT'; 
+            $pengajuan->payment_status = 'SETTLEMENT';
+            $pengajuan->save();
 
-            $pengajuan->save(); 
-
-            DB::commit(); // COMMIT berhasil!
+            DB::commit();
 
             Log::info("ANTRIAN DEBUG: COMMIT berhasil! Antrian dialokasikan: No. {$nomorAntrian}, Tgl: {$tanggalKunjungan->toDateString()}.");
 
             return [
                 'success' => true,
                 'antrian' => $nomorAntrian,
-                // Mengembalikan format tanggal yang user-friendly (03 October 2025)
-                'tanggal' => $tanggalKunjungan->format('d F Y'), 
+                'tanggal' => $tanggalKunjungan->format('d F Y'),
             ];
-
         } catch (\Exception $e) {
-            DB::rollBack(); // ROLLBACK jika ada error
-            
-            // !!! CARI LOG INI DI LARAVEL.LOG !!!
-            Log::error("ANTRIAN DEBUG: ROLLBACK GAGAL MENGALOKASIKAN ANTRIAN untuk ID {$pengajuan->id}. ERROR: " . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
+            DB::rollBack();
+            Log::error("ANTRIAN DEBUG: ROLLBACK GAGAL. ERROR: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return [
                 'success' => false,
@@ -97,5 +101,82 @@ class AntrianService
             ];
         }
     }
-    
+
+    // public function alokasiAntrian(PengajuanSurat $pengajuan): array
+    // {
+    //     $limit = self::MAX_QUOTA_PER_DAY;
+    //     // Gunakan Waktu Jakarta
+    //     $currentDate = Carbon::now('Asia/Jakarta'); 
+
+    //     DB::beginTransaction(); // Mulai transaksi manual
+
+    //     try {
+    //         Log::info("ANTRIAN DEBUG: Memulai alokasi antrian untuk Order ID: {$pengajuan->midtrans_order_id}.");
+
+    //         // 1. Tentukan tanggal kunjungan dan nomor antrian
+    //         $tanggalKunjungan = $currentDate->copy();
+    //         $nomorAntrian = 1;
+
+    //         // Loop untuk mencari kuota kosong
+    //         while (true) {
+    //             // Skip Hari Sabtu dan Minggu (Asumsi layanan libur)
+    //             if ($tanggalKunjungan->isWeekend()) {
+    //                 $tanggalKunjungan->addDay();
+    //                 continue; 
+    //             }
+
+    //             // Hitung kuota yang sudah terisi untuk tanggal ini
+    //             $countToday = PengajuanSurat::where('tanggal_kuota', $tanggalKunjungan->toDateString())
+    //                 ->whereIn('payment_status', ['SUCCESS', 'SETTLEMENT'])
+    //                 ->count();
+
+    //             Log::info("ANTRIAN DEBUG: Tanggal [{$tanggalKunjungan->toDateString()}]: Kuota terisi {$countToday}/{$limit}.");
+
+    //             if ($countToday < $limit) {
+    //                 $nomorAntrian = $countToday + 1;
+    //                 break; // Slot ditemukan
+    //             }
+
+    //             // Kuota penuh, pindah ke hari berikutnya
+    //             $tanggalKunjungan->addDay();
+    //         }
+
+    //         // 2. Lakukan Update Data pada Model
+    //         $pengajuan->nomor_antrian = $nomorAntrian;
+    //         $pengajuan->tanggal_kuota = $tanggalKunjungan->toDateString();
+
+    //         // Lakukan update payment_status ke SETTLEMENT di sini juga, 
+    //         // memastikan perubahan status akan di-commit
+    //         $pengajuan->payment_status = 'SETTLEMENT'; 
+
+    //         $pengajuan->save(); 
+
+    //         DB::commit(); // COMMIT berhasil!
+
+    //         Log::info("ANTRIAN DEBUG: COMMIT berhasil! Antrian dialokasikan: No. {$nomorAntrian}, Tgl: {$tanggalKunjungan->toDateString()}.");
+
+    //         return [
+    //             'success' => true,
+    //             'antrian' => $nomorAntrian,
+    //             // Mengembalikan format tanggal yang user-friendly (03 October 2025)
+    //             'tanggal' => $tanggalKunjungan->format('d F Y'), 
+    //         ];
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack(); // ROLLBACK jika ada error
+
+    //         // !!! CARI LOG INI DI LARAVEL.LOG !!!
+    //         Log::error("ANTRIAN DEBUG: ROLLBACK GAGAL MENGALOKASIKAN ANTRIAN untuk ID {$pengajuan->id}. ERROR: " . $e->getMessage(), [
+    //             'trace' => $e->getTraceAsString(),
+    //         ]);
+
+    //         return [
+    //             'success' => false,
+    //             'antrian' => null,
+    //             'tanggal' => null,
+    //             'error' => $e->getMessage(),
+    //         ];
+    //     }
+    // }
+
 }

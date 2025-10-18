@@ -92,7 +92,7 @@
 <body>
     <div class="surat-container">
         <div class="judul-surat">SURAT KETERANGAN KESEHATAN</div>
-        <div class="nomor-surat">NOMOR: {{ $surat->nomor_surat ?? '____________________' }}</div>
+        <div class="nomor-surat">NOMOR: {{ $surat_kesehatan->nomor_surat ?? '____________________' }}</div>
 
         <div class="isi-surat">
             <p>
@@ -136,7 +136,7 @@
                 </tr>
             </table>
 
-            <p><strong>{{ $surat->isi_keterangan ?? '______________________' }}</strong></p>
+            <p><strong>{{ $surat_kesehatan->isi_keterangan ?? '______________________' }}</strong></p>
 
             <p style="text-align:center; font-weight:bold; margin:18px 0;">
                 {{ $pengajuan_surat->keperluan ?? '____________________________' }}
@@ -149,7 +149,7 @@
 
         <div class="tanda-tangan">
             <p>Gunung Lagan,
-                {{ \Carbon\Carbon::parse($surat->tanggal_pemeriksaan ?? now())->translatedFormat('d F Y') }}</p>
+                {{ \Carbon\Carbon::parse($surat_kesehatan->tanggal_pemeriksaan ?? now())->translatedFormat('d F Y') }}</p>
             <p>a.n Direktur RSUD Aceh Singkil</p>
             <p><strong>Dokter yang memeriksa</strong></p><br><br><br>
             <p style="text-decoration:underline; font-weight:bold;">{{ $dokter->nama ?? 'Nama Dokter' }}</p>
@@ -159,10 +159,10 @@
         <div class="catatan">
             <p style="font-weight:bold;">Catatan:</p>
             <ul>
-                <li>Tinggi Badan: {{ $surat->tinggi_badan ?? '___' }} cm</li>
-                <li>Berat Badan: {{ $surat->berat_badan ?? '___' }} kg</li>
-                <li>Tensi Darah: {{ $surat->tensi ?? '___' }} mmHg</li>
-                <li>Golongan Darah: {{ $surat->gol_darah ?? '___' }}</li>
+                <li>Tinggi Badan: {{ $surat_kesehatan->tinggi_badan ?? '___' }} cm</li>
+                <li>Berat Badan: {{ $surat_kesehatan->berat_badan ?? '___' }} kg</li>
+                <li>Tensi Darah: {{ $surat_kesehatan->tensi ?? '___' }} mmHg</li>
+                <li>Golongan Darah: {{ $surat_kesehatan->gol_darah ?? '___' }}</li>
             </ul>
         </div>
     </div>

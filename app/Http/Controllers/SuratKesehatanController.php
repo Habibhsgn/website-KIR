@@ -22,9 +22,13 @@ class SuratKesehatanController extends Controller
         $validated = $request->validate([
             'pengajuan_id' => 'required|exists:pengajuan_surat,id',
             'dokter_id' => 'required|exists:dokter,id',
-            'nomor_surat' => 'required|string|max:255', // ✅ nomor surat
+            'nomor_surat' => 'required|string|max:255', // Nomor surat
             'tanggal_pemeriksaan' => 'required|date',
             'hasil' => 'required|string',
+            'tinggi_badan' => 'required|numeric|min:30|max:300',
+            'berat_badan' => 'required|numeric|min:1|max:500',
+            'tensi_darah' => 'required|string|max:10',
+            'golongan_darah' => 'required|string|in:A,B,AB,O',
         ]);
 
         // Ambil tanggal dari input
@@ -67,9 +71,13 @@ class SuratKesehatanController extends Controller
         DB::table('surat_kesehatan')->insert([
             'pengajuan_id' => $validated['pengajuan_id'],
             'dokter_id' => $validated['dokter_id'],
-            'nomor_surat' => $validated['nomor_surat'], // ✅ simpan nomor surat
+            'nomor_surat' => $validated['nomor_surat'],
             'tanggal_pemeriksaan' => $validated['tanggal_pemeriksaan'],
             'hasil' => $validated['hasil'],
+            'tinggi_badan' => $validated['tinggi_badan'],
+            'berat_badan' => $validated['berat_badan'],
+            'tensi_darah' => $validated['tensi_darah'],
+            'golongan_darah' => $validated['golongan_darah'],
             'isi_keterangan' => $hasilKalimat,
             'created_at' => now(),
             'updated_at' => now(),
@@ -81,6 +89,7 @@ class SuratKesehatanController extends Controller
         return redirect()->route('resume.show', $pengajuan->nik)
             ->with('success', 'Surat Keterangan Sehat berhasil disimpan.');
     }
+
 
     private function getAlamatLengkap($pengajuan)
     {
@@ -123,5 +132,4 @@ class SuratKesehatanController extends Controller
             'alamat'
         ));
     }
-    
 }

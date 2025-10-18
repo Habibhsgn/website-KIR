@@ -156,8 +156,8 @@
             <ul>
                 <li>Tinggi Badan: {{ $surat_kesehatan->tinggi_badan ?? '___' }} cm</li>
                 <li>Berat Badan: {{ $surat_kesehatan->berat_badan ?? '___' }} kg</li>
-                <li>Tensi Darah: {{ $surat_kesehatan->tensi ?? '___' }} mmHg</li>
-                <li>Golongan Darah: {{ $surat_kesehatan->gol_darah ?? '___' }}</li>
+                <li>Tensi Darah: {{ $surat_kesehatan->tensi_darah ?? '___' }} mmHg</li>
+                <li>Golongan Darah: {{ $surat_kesehatan->golongan_darah ?? '___' }}</li>
             </ul>
         </div>
     </div>

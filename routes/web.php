@@ -55,14 +55,17 @@ Route::middleware(['auth'])->group(function () {
         // Kejiwaan
         Route::get('/kejiwaan/create/{id}', [SuratKeteranganKejiwaanController::class, 'create'])->name('surat-jiwa.create');
         Route::get('/kejiwaan/preview/{id}', [SuratKeteranganKejiwaanController::class, 'preview'])->name('surat-kejiwaan.preview');
+        Route::post('/kejiwaan/store', [SuratKeteranganKejiwaanController::class, 'store'])->name('surat-jiwa.store');
 
         // Keterangan Sehat
         Route::get('/kesehatan/create/{id}', [SuratKesehatanController::class, 'create'])->name('surat-kesehatan.create');
         Route::get('/kesehatan/preview/{id}', [SuratKesehatanController::class, 'preview'])->name('surat-kesehatan.preview');
+         Route::post('/kesehatan/store', [SuratKesehatanController::class, 'store'])->name('surat-kesehatan.store');
 
         // Bebas Narkoba
         Route::get('/narkoba/create/{id}', [SuratBebasNarkobaController::class, 'create'])->name('surat-narkoba.create');
         Route::get('/narkoba/preview/{id}', [SuratBebasNarkobaController::class, 'preview'])->name('surat-bebas-narkoba.preview');
+        Route::post('/narkoba/store', [SuratBebasNarkobaController::class, 'store'])->name('surat-narkoba.store');
     });
 });
 
