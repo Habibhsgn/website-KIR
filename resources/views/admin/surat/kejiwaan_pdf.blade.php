@@ -82,7 +82,7 @@
 
 <body>
     <div class="surat-container">
-        <div class="judul-surat">SURAT KETERANGAN KESEHATAN JIWA</div>
+        <div class="judul-surat" style="margin-top:6cm;">SURAT KETERANGAN KESEHATAN JIWA</div>
         <div class="nomor-surat">NOMOR: {{ $surat_kejiwaan->nomor_surat ?? '____________________' }}</div>
 
         <div class="isi-surat">
@@ -171,7 +171,7 @@
                 </p>
                 <p>a.n Direktur RSUD Aceh Singkil</p>
                 <p style="font-weight: bold;">Dokter yang memeriksa</p>
-                <br><br><br>
+                <img src="{{ public_path('/assets/plugin-admin/images/QR_kir.png') }}" alt="" width="100px" height="100px">
                 <p style="text-decoration: underline; font-weight: bold;">{{ $dokter->nama ?? 'Nama Dokter' }}</p>
                 <p>NIP. {{ $dokter->nip ?? 'NIP Dokter' }}</p>
             </div>

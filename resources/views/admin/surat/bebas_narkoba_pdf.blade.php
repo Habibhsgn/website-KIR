@@ -165,7 +165,7 @@
                 <p>Gunung Lagan, {{ \Carbon\Carbon::parse($surat_bebas_narkoba->created_at ?? now())->translatedFormat('d F Y') }}</p>
                 <p>a.n Direktur RSUD Aceh Singkil</p>
                 <p><strong>Dokter yang memeriksa</strong></p>
-                <br><br><br>
+                <img src="{{ public_path('/assets/plugin-admin/images/QR_kir.png') }}" alt="" width="100px" height="100px">
                 <p><b><u>{{ $dokter->nama ?? '-' }}</u></b></p>
                 <p>NIP. {{ $dokter->nip ?? '-' }}</p>
             </div>

@@ -151,7 +151,8 @@
             <p>Gunung Lagan,
                 {{ \Carbon\Carbon::parse($surat_kesehatan->tanggal_pemeriksaan ?? now())->translatedFormat('d F Y') }}</p>
             <p>a.n Direktur RSUD Aceh Singkil</p>
-            <p><strong>Dokter yang memeriksa</strong></p><br><br><br>
+            <p><strong>Dokter yang memeriksa</strong></p>
+            <img src="{{ public_path('/assets/plugin-admin/images/QR_kir.png') }}" alt="" width="100px" height="100px">
             <p style="text-decoration:underline; font-weight:bold;">{{ $dokter->nama ?? 'Nama Dokter' }}</p>
             <p>NIP. {{ $dokter->nip ?? 'NIP Dokter' }}</p>
         </div>
